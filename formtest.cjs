@@ -1,0 +1,25 @@
+const { chromium } = require("C:/projects/work/tandem/dtprototype-3d65b675/node_modules/playwright");
+const path = require("path");
+(async () => {
+  const browser = await chromium.launch({ executablePath: process.env.LOCALAPPDATA + "/ms-playwright/chromium-1148/chrome-win/chrome.exe" });
+  const page = await browser.newPage({ viewport: { width: 1366, height: 900 } });
+  const events = [];
+  page.on("console", (m) => events.push(m.text()));
+  await page.goto(require("url").pathToFileURL(path.resolve("preview.html")).href);
+  const host = page.locator("dt-expert-talks");
+  await host.locator(".hero .btn").click();
+  await page.waitForTimeout(900);
+  const focused = await page.evaluate(() => document.querySelector("dt-expert-talks").shadowRoot.activeElement?.name);
+  await host.locator("form button").click();
+  const msg1 = await host.locator(".form-msg").textContent();
+  await host.locator('input[name="firstName"]').fill("Test");
+  await host.locator('input[name="email"]').fill("not-an-email");
+  await host.locator("form button").click();
+  const msg2 = await host.locator(".form-msg").textContent();
+  await host.locator('input[name="email"]').fill("test@example.com");
+  await host.locator("form button").click();
+  await host.locator("[data-form-done]").waitFor({ state: "visible", timeout: 3000 });
+  console.log(JSON.stringify({ focusedAfterCta: focused, emptySubmit: msg1, badEmail: msg2, registerEvent: events, success: true }));
+  await page.screenshot({ path: "shots/form-success.png", clip: { x: 760, y: 0, width: 600, height: 900 }, fullPage: false });
+  await browser.close();
+})();

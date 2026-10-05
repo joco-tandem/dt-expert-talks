@@ -1,0 +1,4 @@
+# Canva mockup export and QA screenshots stay local
+mockup.png
+shots/
+node_modules/

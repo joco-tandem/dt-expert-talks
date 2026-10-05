@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Expert Talks preview</title>
+  <style>body { margin: 0; background: #fff; }</style>
+</head>
+<body>
+  <dt-expert-talks id="et"></dt-expert-talks>
+  <script src="dist/dt-expert-talks.js"></script>
+  <script>
+    // Stand-in for the Wix page code: answer the register event like Velo would.
+    document.getElementById("et").addEventListener("register", (e) => {
+      console.log("register", e.detail);
+      setTimeout(() => e.target.setAttribute("status", "success"), 700);
+    });
+  </script>
+</body>
+</html>
