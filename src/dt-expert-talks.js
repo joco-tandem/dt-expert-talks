@@ -19,7 +19,7 @@
   // @font-face doesn't work inside a shadow root, so fonts load on the page.
   // Arita Buri isn't on Google Fonts; a Latin-only subset is inlined instead.
   const FONTS_HREF =
-    "https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap";
+    "https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Libre+Baskerville&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Vollkorn&display=swap";
   const ARITA_CSS = [
     [500, "__ARITA_MEDIUM__"],
     [600, "__ARITA_SEMIBOLD__"],
@@ -60,6 +60,8 @@
       --footer: #f2eddb;
       --tape: rgba(206, 189, 145, 0.82);
       --serif: "Arita Buri", Georgia, serif;
+      --baskerville: "Libre Baskerville", Georgia, serif;
+      --vollkorn: "Vollkorn", Georgia, serif;
       --sans: "Public Sans", system-ui, sans-serif;
       --script: "Caveat", "Segoe Print", cursive;
       --gutter: clamp(16px, 5vw, 64px);
@@ -149,7 +151,7 @@
       display: inline-block;
     }
     .hero h1 {
-      font: 500 70px/1.05 var(--serif);
+      font: 400 70px/1.05 var(--baskerville);
       color: var(--ink);
       margin-top: 28px;
       letter-spacing: -0.005em;
@@ -230,7 +232,7 @@
     /* ---------- Why this talk ---------- */
     .why { background: var(--olive); color: #f2eddb; text-align: center; padding: 76px 0 92px; }
     .why .eyebrow { font-size: 11.5px; letter-spacing: 0.3em; color: #f2eddb; }
-    .why h2 { font: 500 42px/1.2 var(--serif); letter-spacing: -0.01em; margin-top: 30px; }
+    .why h2 { font: 400 42px/1.2 var(--baskerville); letter-spacing: -0.01em; margin-top: 30px; }
     .why-lead { font: 700 19px/1.6 var(--sans); letter-spacing: 0.03em; max-width: 820px; margin: 34px auto 0; }
     .why-script { font-family: var(--script); font-weight: 500; font-size: 31px; line-height: 1.3; max-width: 860px; margin: 30px auto 0; }
 
@@ -324,7 +326,7 @@
     .register { background: var(--forest); color: #f6f0e6; padding: 96px 0 100px; }
     .reg-grid { display: grid; grid-template-columns: minmax(0, 1fr) 430px; gap: 64px; align-items: center; }
     .register .eyebrow { color: var(--khaki); font-weight: 600; }
-    .register h2 { font: 500 48px/1.05 var(--serif); letter-spacing: -0.02em; margin-top: 20px; }
+    .register h2 { font: 400 48px/1.05 var(--vollkorn); letter-spacing: -0.02em; margin-top: 20px; }
     .reg-lead { font: 600 20.8px/1.5 var(--sans); letter-spacing: 0.02em; color: var(--sand); max-width: 590px; margin-top: 28px; }
     .register .script { font-size: 30px; color: var(--khaki); margin-top: 26px; }
     .form-card {
@@ -336,7 +338,7 @@
       box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
     }
     .form-card .tape { top: -14px; left: 52px; }
-    .form-card h3 { font: 500 34px/1.05 var(--serif); letter-spacing: -0.02em; }
+    .form-card h3 { font: 400 34px/1.05 var(--vollkorn); letter-spacing: -0.02em; }
     .form-meta { font: 600 14.7px/1.5 var(--sans); letter-spacing: 0.02em; color: #6b705c; margin-top: 12px; }
     form { margin-top: 18px; display: grid; gap: 16px; }
     label { display: grid; gap: 8px; font: 700 14.7px/1.5 var(--sans); letter-spacing: 0.02em; }
@@ -356,7 +358,7 @@
     .form-msg { font: 600 15px/1.5 var(--sans); text-align: center; margin-top: 12px; min-height: 0; }
     .form-msg.error { color: #9b2a1c; }
     .form-done { text-align: center; padding: 26px 0 10px; }
-    .form-done h4 { margin: 0; font: 500 30px/1.15 var(--serif); }
+    .form-done h4 { margin: 0; font: 400 30px/1.15 var(--vollkorn); }
     .form-done p { font: 500 17px/1.6 var(--sans); color: #47473d; margin-top: 12px; }
     .form-done p.script { font: 500 27px/1.3 var(--script); color: var(--rust); margin-top: 14px; }
 
@@ -364,7 +366,8 @@
     .foot { background: var(--footer); color: #3f4731; text-align: center; padding: 56px 0 36px; }
     .foot h2 { font: italic 600 28.7px/1 var(--serif); letter-spacing: -0.02em; }
     .foot .disclaimer { font: 400 13.6px/1.7 var(--sans); letter-spacing: 0.02em; max-width: 500px; margin: 26px auto 0; }
-    .foot .logo { width: 126px; margin: 30px auto 0; }
+    .foot .logo-link { width: 126px; margin: 30px auto 0; }
+    .foot .logo { width: 100%; }
     .foot .contact { font: 400 12px/1.7 var(--sans); letter-spacing: 0.02em; margin-top: 22px; }
     .foot a { color: #9b5b3a; font-weight: 500; }
 
@@ -605,7 +608,7 @@
           <span class="tape" aria-hidden="true"></span>
           <div data-form-body>
             <h3>Save your seat</h3>
-            <p class="form-meta">Sat, Oct 17 · 1:00-2:00 PM EDT · Online</p>
+            <p class="form-meta balance"><span class="nowrap">Sat, Oct 17</span> · <span class="nowrap">1:00-2:00 PM EDT</span> · <span class="nowrap">Online</span></p>
             <form novalidate>
               <label>First name
                 <input name="firstName" type="text" autocomplete="given-name" required maxlength="80">
@@ -631,7 +634,7 @@
       <div class="wrap">
         <h2>Raising Capable Kids.</h2>
         <p class="disclaimer pretty">This session is for learning and conversation. It isn't a substitute for professional care. If your child is in crisis, call or text 988 (Suicide &amp; Crisis Lifeline) or contact emergency services.</p>
-        <img class="logo" src="${LOGO}" alt="Dinner Table" width="126" height="33">
+        <a class="logo-link" href="https://www.dinnertable.com/"><img class="logo" src="${LOGO}" alt="Dinner Table home" width="126" height="33"></a>
         <p class="contact">Questions? Email us at <a href="mailto:hello@dinnertable.com">hello@dinnertable.com</a></p>
       </div>
     </footer>
