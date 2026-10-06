@@ -123,6 +123,8 @@
     .hero { padding: 36px 0 96px; overflow: hidden; }
     .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
     .logo { width: 126px; height: auto; }
+    .logo-link { display: block; border-radius: 4px; }
+    .logo-link:focus-visible { outline: 3px solid var(--khaki); outline-offset: 4px; }
     .event-tag {
       font: 600 11.5px/1.6 var(--sans);
       letter-spacing: 0.25em;
@@ -479,7 +481,7 @@
     <section class="hero dotted">
       <div class="wrap">
         <div class="topbar">
-          <img class="logo" src="${LOGO}" alt="Dinner Table" width="126" height="33">
+          <a class="logo-link" href="https://www.dinnertable.com/"><img class="logo" src="${LOGO}" alt="Dinner Table home" width="126" height="33"></a>
           <p class="event-tag">Expert Talks - A Dinner Table Event</p>
         </div>
         <div class="hero-grid">

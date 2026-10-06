@@ -15,16 +15,10 @@ Pin a tag (for example `v1.0.0`) so a change only goes live when the URL in Stud
 
 The form dispatches a `register` event with `{ firstName, email }`. The Wix page code handles it and answers by setting the element's `status` attribute to `success` or `error`. If nothing answers within 15 seconds, the form shows an error.
 
-```js
-$w('#customElement1').on('register', async ({ detail }) => {
-  try {
-    await saveRegistration(detail); // backend web method
-    $w('#customElement1').setAttribute('status', 'success');
-  } catch (e) {
-    $w('#customElement1').setAttribute('status', 'error');
-  }
-});
-```
+Signups go to Kit with the tag `STATE - Expert Talks RSVP`. The Wix code lives in `wix/`:
+
+- `wix/backend/kit.web.js` → Studio backend file `backend/kit.web.js`. It reads a Kit v4 API key from the Secrets Manager (`KIT_API_KEY`), adds the subscriber, then applies the tag.
+- `wix/expert-talks.page.js` → the Expert Talks page's code. It answers `register` by calling the backend.
 
 ## Develop
 
