@@ -17,7 +17,7 @@ The form dispatches a `register` event with `{ firstName, email }`. The Wix page
 
 Signups go to Kit with the tag `STATE - Expert Talks RSVP`. The Wix code lives in `wix/`:
 
-- `wix/backend/kit.web.js` → Studio backend file `backend/kit.web.js`. It reads a Kit v4 API key from the Secrets Manager (`KIT_API_KEY`), adds the subscriber, then applies the tag.
+- `wix/backend/kit.web.js` → Studio backend file `backend/kit.web.js`. It reads a Kit v4 API key from the Secrets Manager (`KIT_API_KEY`), adds the subscriber, then applies the tag (by ID, `24334376`).
 - `wix/expert-talks.page.js` → the Expert Talks page's code. It answers `register` by calling the backend.
 
 ## Develop

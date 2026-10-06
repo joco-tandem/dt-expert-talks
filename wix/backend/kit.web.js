@@ -8,11 +8,11 @@ import { elevate } from "wix-auth";
 import { fetch } from "wix-fetch";
 
 const KIT_API = "https://api.kit.com/v4";
-const TAG_NAME = "STATE - Expert Talks RSVP";
+// Kit tag "STATE - Expert Talks RSVP".
+const TAG_ID = 24334376;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 const getSecretValue = elevate(secrets.getSecretValue);
-let tagIdCache;
 
 async function kit(apiKey, path, init = {}) {
   const res = await fetch(`${KIT_API}${path}`, {
@@ -21,14 +21,6 @@ async function kit(apiKey, path, init = {}) {
   });
   if (!res.ok) throw new Error(`Kit ${init.method || "GET"} ${path} failed: ${res.status} ${await res.text()}`);
   return res.json();
-}
-
-async function tagId(apiKey) {
-  if (tagIdCache) return tagIdCache;
-  const { tags } = await kit(apiKey, "/tags?per_page=1000");
-  const tag = tags.find((t) => t.name === TAG_NAME);
-  if (!tag) throw new Error(`Kit tag "${TAG_NAME}" not found`);
-  return (tagIdCache = tag.id);
 }
 
 export const registerForExpertTalk = webMethod(Permissions.Anyone, async (firstName, email) => {
@@ -42,7 +34,7 @@ export const registerForExpertTalk = webMethod(Permissions.Anyone, async (firstN
     method: "POST",
     body: JSON.stringify({ first_name: firstName, email_address: email, state: "active" }),
   });
-  await kit(apiKey, `/tags/${await tagId(apiKey)}/subscribers`, {
+  await kit(apiKey, `/tags/${TAG_ID}/subscribers`, {
     method: "POST",
     body: JSON.stringify({ email_address: email }),
   });
