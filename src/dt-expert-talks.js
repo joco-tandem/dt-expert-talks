@@ -17,8 +17,18 @@
   const HEADSHOT = "data:image/jpeg;base64,__HEADSHOT__";
 
   // @font-face doesn't work inside a shadow root, so fonts load on the page.
+  // Arita Buri isn't on Google Fonts; a Latin-only subset is inlined instead.
   const FONTS_HREF =
-    "https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Caveat+Brush&family=Gelasio:wght@600;700&family=Libre+Baskerville:ital,wght@0,400;1,700&family=Vollkorn:wght@400;500&display=swap";
+    "https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap";
+  const ARITA_CSS = [
+    [500, "__ARITA_MEDIUM__"],
+    [600, "__ARITA_SEMIBOLD__"],
+  ]
+    .map(
+      ([weight, b64]) =>
+        `@font-face{font-family:"Arita Buri";font-weight:${weight};font-style:normal;font-display:swap;src:url(data:font/woff2;base64,${b64}) format("woff2")}`,
+    )
+    .join("");
 
   function ensureFonts() {
     if (document.querySelector(`link[data-${TAG}-fonts]`)) return;
@@ -26,7 +36,9 @@
     link.rel = "stylesheet";
     link.href = FONTS_HREF;
     link.setAttribute(`data-${TAG}-fonts`, "");
-    document.head.appendChild(link);
+    const style = document.createElement("style");
+    style.textContent = ARITA_CSS;
+    document.head.append(link, style);
   }
 
   const CSS = /* css */ `
@@ -47,11 +59,9 @@
       --sand: #d8d1be;
       --footer: #f2eddb;
       --tape: rgba(206, 189, 145, 0.82);
-      --serif: "Libre Baskerville", Georgia, serif;
-      --serif-2: "Gelasio", Georgia, serif;
-      --serif-3: "Vollkorn", Georgia, serif;
-      --sans: "Barlow", system-ui, sans-serif;
-      --script: "Caveat Brush", "Segoe Print", cursive;
+      --serif: "Arita Buri", Georgia, serif;
+      --sans: "Public Sans", system-ui, sans-serif;
+      --script: "Caveat", "Segoe Print", cursive;
       --gutter: clamp(16px, 5vw, 64px);
       --max: 1150px;
       display: block;
@@ -81,7 +91,7 @@
       text-transform: uppercase;
       color: var(--rust);
     }
-    .script { font-family: var(--script); font-weight: 400; }
+    .script { font-family: var(--script); font-weight: 500; }
     .tape {
       position: absolute;
       width: 104px;
@@ -129,6 +139,7 @@
     }
     .hero-kicker {
       font-family: var(--script);
+      font-weight: 500;
       font-size: 30px;
       color: var(--rust-btn);
       transform: rotate(-2deg);
@@ -136,7 +147,7 @@
       display: inline-block;
     }
     .hero h1 {
-      font: 400 70px/1.05 var(--serif);
+      font: 500 70px/1.05 var(--serif);
       color: var(--ink);
       margin-top: 28px;
       letter-spacing: -0.005em;
@@ -173,6 +184,7 @@
     .polaroid img { width: 100%; aspect-ratio: 288 / 335; object-fit: cover; object-position: 50% 30%; }
     .polaroid figcaption {
       font-family: var(--script);
+      font-weight: 500;
       font-size: 27px;
       color: var(--body);
       padding: 10px 6px 16px 20px;
@@ -184,6 +196,7 @@
       top: 10px;
       right: 0;
       font-family: var(--script);
+      font-weight: 500;
       font-size: 26px;
       line-height: 1;
       color: var(--muted);
@@ -209,15 +222,15 @@
       pointer-events: none;
     }
     .ticket .t-admit { font: 600 11.5px/1.6 var(--sans); letter-spacing: 0.25em; text-transform: uppercase; }
-    .ticket .t-date { font: 400 28px/1.1 var(--serif); margin-top: 6px; }
+    .ticket .t-date { font: 500 28px/1.1 var(--serif); margin-top: 6px; }
     .ticket .t-time { font: 600 14px/1.6 var(--sans); letter-spacing: 0.02em; margin-top: 4px; }
 
     /* ---------- Why this talk ---------- */
     .why { background: var(--olive); color: #f2eddb; text-align: center; padding: 76px 0 92px; }
     .why .eyebrow { font-size: 11.5px; letter-spacing: 0.3em; color: #f2eddb; }
-    .why h2 { font: 400 42px/1.2 var(--serif); letter-spacing: -0.01em; margin-top: 30px; }
+    .why h2 { font: 500 42px/1.2 var(--serif); letter-spacing: -0.01em; margin-top: 30px; }
     .why-lead { font: 700 19px/1.6 var(--sans); letter-spacing: 0.03em; max-width: 820px; margin: 34px auto 0; }
-    .why-script { font-family: var(--script); font-size: 31px; line-height: 1.3; max-width: 860px; margin: 30px auto 0; }
+    .why-script { font-family: var(--script); font-weight: 500; font-size: 31px; line-height: 1.3; max-width: 860px; margin: 30px auto 0; }
 
     /* ---------- Audience cards ---------- */
     .audience { padding: 88px 0 56px; }
@@ -235,7 +248,7 @@
     .card.teens { background: var(--peach); transform: rotate(1.4deg); }
     .card.teens .tape { top: -12px; right: 40px; }
     .card .eyebrow { font-size: 17px; }
-    .card h3 { font: 700 27px/1.3 var(--serif-2); color: var(--ink-2); margin-top: 10px; }
+    .card h3 { font: 600 27px/1.3 var(--serif); color: var(--ink-2); margin-top: 10px; }
     .card ul { margin-top: 26px; display: grid; gap: 16px; }
     .card li {
       position: relative;
@@ -254,6 +267,7 @@
     }
     .card .sign {
       font-family: var(--script);
+      font-weight: 500;
       font-size: 26px;
       color: var(--olive-2);
       text-align: right;
@@ -263,11 +277,11 @@
     /* ---------- Guest ---------- */
     .guest { padding: 56px 0 40px; }
     .guest-grid { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 72px; align-items: start; }
-    .guest .polaroid { transform: rotate(2.8deg); margin-top: 18px; }
+    .guest .polaroid { transform: rotate(2.8deg); margin: 18px 0 0; }
     .guest .polaroid figcaption { font-size: 25px; color: var(--ink-2); text-align: center; padding: 14px 6px 22px; }
     .guest .polaroid .tape.l { top: -10px; left: -26px; transform: rotate(-38deg); }
     .guest .polaroid .tape.r { top: -4px; right: -26px; transform: rotate(38deg); }
-    .guest h2 { font: 700 51px/1.2 var(--serif-2); color: var(--ink-2); margin-top: 10px; }
+    .guest h2 { font: 600 51px/1.2 var(--serif); color: var(--ink-2); margin-top: 10px; }
     .guest-role { font: 500 17.5px/1.5 var(--sans); letter-spacing: 0.02em; color: var(--olive-2); margin-top: 14px; }
     .guest-bio p { font: 400 18.3px/1.6 var(--sans); letter-spacing: 0.02em; color: var(--ink-2); margin-top: 16px; }
     .guest-bio p + p { margin-top: 24px; }
@@ -283,7 +297,7 @@
     .stat:nth-child(1) { transform: rotate(-1deg); }
     .stat:nth-child(2) { transform: rotate(1.4deg); }
     .stat:nth-child(3) { transform: rotate(-1deg); }
-    .stat b { display: block; font: 700 31px/1.4 var(--serif-2); color: var(--rust); }
+    .stat b { display: block; font: 600 31px/1.4 var(--serif); color: var(--rust); }
     .stat span { font: 400 13.5px/1.5 var(--sans); letter-spacing: 0.02em; color: var(--ink-2); }
 
     /* ---------- Question card ---------- */
@@ -300,15 +314,15 @@
       box-shadow: 0 2px 4px rgba(60, 50, 30, 0.08), 0 12px 26px rgba(60, 50, 30, 0.08);
     }
     .q-card .tape { top: -18px; left: 50%; margin-left: -64px; width: 128px; }
-    .q-card h2 { font: 700 39px/1.2 var(--serif-2); color: var(--ink-2); }
+    .q-card h2 { font: 600 39px/1.2 var(--serif); color: var(--ink-2); }
     .q-card p { font: 400 18.3px/1.6 var(--sans); letter-spacing: 0.02em; color: var(--ink-2); max-width: 560px; margin: 16px auto 0; }
-    .q-card p.script { font: 400 30px/1.3 var(--script); letter-spacing: 0; color: var(--rust); margin-top: 22px; }
+    .q-card p.script { font: 500 30px/1.3 var(--script); letter-spacing: 0; color: var(--rust); margin-top: 22px; }
 
     /* ---------- Register ---------- */
     .register { background: var(--forest); color: #f6f0e6; padding: 96px 0 100px; }
     .reg-grid { display: grid; grid-template-columns: minmax(0, 1fr) 430px; gap: 64px; align-items: center; }
     .register .eyebrow { color: var(--khaki); font-weight: 600; }
-    .register h2 { font: 400 48px/1.05 var(--serif-3); letter-spacing: -0.02em; margin-top: 20px; }
+    .register h2 { font: 500 48px/1.05 var(--serif); letter-spacing: -0.02em; margin-top: 20px; }
     .reg-lead { font: 600 20.8px/1.5 var(--sans); letter-spacing: 0.02em; color: var(--sand); max-width: 590px; margin-top: 28px; }
     .register .script { font-size: 30px; color: var(--khaki); margin-top: 26px; }
     .form-card {
@@ -320,7 +334,7 @@
       box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
     }
     .form-card .tape { top: -14px; left: 52px; }
-    .form-card h3 { font: 400 34px/1.05 var(--serif-3); letter-spacing: -0.02em; }
+    .form-card h3 { font: 500 34px/1.05 var(--serif); letter-spacing: -0.02em; }
     .form-meta { font: 600 14.7px/1.5 var(--sans); letter-spacing: 0.02em; color: #6b705c; margin-top: 12px; }
     form { margin-top: 18px; display: grid; gap: 16px; }
     label { display: grid; gap: 8px; font: 700 14.7px/1.5 var(--sans); letter-spacing: 0.02em; }
@@ -340,13 +354,13 @@
     .form-msg { font: 600 15px/1.5 var(--sans); text-align: center; margin-top: 12px; min-height: 0; }
     .form-msg.error { color: #9b2a1c; }
     .form-done { text-align: center; padding: 26px 0 10px; }
-    .form-done h4 { margin: 0; font: 400 30px/1.15 var(--serif-3); }
+    .form-done h4 { margin: 0; font: 500 30px/1.15 var(--serif); }
     .form-done p { font: 500 17px/1.6 var(--sans); color: #47473d; margin-top: 12px; }
-    .form-done p.script { font: 400 27px/1.3 var(--script); color: var(--rust); margin-top: 14px; }
+    .form-done p.script { font: 500 27px/1.3 var(--script); color: var(--rust); margin-top: 14px; }
 
     /* ---------- Footer ---------- */
     .foot { background: var(--footer); color: #3f4731; text-align: center; padding: 56px 0 36px; }
-    .foot h2 { font: italic 700 28.7px/1 var(--serif); letter-spacing: -0.02em; }
+    .foot h2 { font: italic 600 28.7px/1 var(--serif); letter-spacing: -0.02em; }
     .foot .disclaimer { font: 400 13.6px/1.7 var(--sans); letter-spacing: 0.02em; max-width: 500px; margin: 26px auto 0; }
     .foot .logo { width: 126px; margin: 30px auto 0; }
     .foot .contact { font: 400 12px/1.7 var(--sans); letter-spacing: 0.02em; margin-top: 22px; }
@@ -543,7 +557,7 @@
 
     <section class="guest dotted">
       <div class="wrap guest-grid">
-        <figure class="polaroid" style="margin:0">
+        <figure class="polaroid">
           <span class="tape l" aria-hidden="true"></span>
           <span class="tape r" aria-hidden="true"></span>
           <img src="${HEADSHOT}" alt="" width="284" height="321">
@@ -552,14 +566,14 @@
         <div>
           <p class="eyebrow">Meet our guest</p>
           <h2>Shane Watson</h2>
-          <p class="guest-role">Mental health educator, recovery coach, and parent</p>
+          <p class="guest-role balance">Mental health educator, recovery coach, and parent</p>
           <div class="guest-bio">
             <p class="pretty">Shane has spent 14 years working in mental and behavioral health, and he's 14 years into his own long-term recovery. He's spoken at more than 600 schools, companies, and conferences across the U.S., appeared on the Today Show, PBS, Good Day New York, and Kansas City Live, and hosts the Silverladder Podcast on parenting and mental health.</p>
             <p class="pretty">He brings the research and the real story, and he talks to parents like a person, not a&nbsp;pamphlet.</p>
           </div>
           <ul class="stats">
             <li class="stat"><b>14</b><span>years in the field</span></li>
-            <li class="stat"><b>600+</b><span>talks across the U.S.</span></li>
+            <li class="stat"><b>600+</b><span>talks across <span class="nowrap">the U.S.</span></span></li>
             <li class="stat"><b>100+</b><span>media interviews</span></li>
           </ul>
         </div>
