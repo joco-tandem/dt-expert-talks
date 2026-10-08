@@ -4,7 +4,8 @@
  * (dinnertable.com/expert-talks), from Paeng's Canva mockup "Expert Talks DT".
  *
  * Registration: the form dispatches a `register` CustomEvent
- * ({ firstName, email }). Wix page code listens with
+ * ({ firstName, lastName, email, source, question }), mirroring the Wix
+ * event's RSVP form. Wix page code listens with
  *   $w('#customElement1').on('register', ...)
  * and answers by setting the `status` attribute to "success" or "error".
  * If nothing answers within 15s the form shows the error state.
@@ -119,7 +120,7 @@
     }
     .btn:hover { background: #7f4418; }
     .btn:active { transform: translateY(1px); }
-    .btn:focus-visible, input:focus-visible { outline: 3px solid var(--khaki); outline-offset: 2px; }
+    .btn:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid var(--khaki); outline-offset: 2px; }
 
     /* ---------- Hero ---------- */
     .hero { padding: 36px 0 96px; overflow: hidden; }
@@ -342,7 +343,9 @@
     .form-meta { font: 600 14.7px/1.5 var(--sans); letter-spacing: 0.02em; color: #6b705c; margin-top: 12px; }
     form { margin-top: 18px; display: grid; gap: 16px; }
     label { display: grid; gap: 8px; font: 700 14.7px/1.5 var(--sans); letter-spacing: 0.02em; }
-    input {
+    .name-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .optional { font-weight: 500; color: #6b705c; }
+    input, select, textarea {
       width: 100%;
       height: 50px;
       border: 1.5px solid #d6ccb4;
@@ -352,6 +355,15 @@
       color: #313b25;
       padding: 0 14px;
     }
+    select {
+      appearance: none;
+      padding-right: 40px;
+      background: #fdfbf6 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23313b25' stroke-width='1.8'/%3E%3C/svg%3E") no-repeat right 15px center;
+      cursor: pointer;
+    }
+    select:invalid { color: #8a8a78; }
+    select option { color: #313b25; }
+    textarea { height: auto; min-height: 96px; padding: 12px 14px; line-height: 1.45; resize: vertical; }
     form .btn { width: 100%; margin-top: 18px; padding: 15px 20px; }
     form .btn[disabled] { opacity: 0.7; cursor: progress; }
     .form-note { font: 600 14.2px/1.25 var(--sans); letter-spacing: 0.02em; color: #6b705c; text-align: center; margin-top: 18px; }
@@ -473,12 +485,17 @@
       .ticket .t-admit { font-size: 10px; letter-spacing: 0.2em; }
       .ticket .t-date { font-size: 22px; }
       .ticket .t-time { font-size: 12.5px; }
+      .name-row { grid-template-columns: 1fr; gap: 16px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
       .btn { transition: none; }
     }
   `;
+
+  // Must match the options of the Wix event form's "How did you hear about
+  // this event?" dropdown, or Wix rejects the RSVP.
+  const SOURCES = ["A Friend", "Dinner Table Community Board", "Email", "Social", "Ad", "Other"];
 
   const HTML = /* html */ `
     <section class="hero dotted">
@@ -610,11 +627,25 @@
             <h3>Save your seat</h3>
             <p class="form-meta balance"><span class="nowrap">Sat, Oct 17</span> · <span class="nowrap">1:00-2:00 PM EDT</span> · <span class="nowrap">Online</span></p>
             <form novalidate>
-              <label>First name
-                <input name="firstName" type="text" autocomplete="given-name" required maxlength="80">
-              </label>
+              <div class="name-row">
+                <label>First name
+                  <input name="firstName" type="text" autocomplete="given-name" required maxlength="50">
+                </label>
+                <label>Last name
+                  <input name="lastName" type="text" autocomplete="family-name" required maxlength="50">
+                </label>
+              </div>
               <label>Email
-                <input name="email" type="email" autocomplete="email" required maxlength="200">
+                <input name="email" type="email" autocomplete="email" required maxlength="255">
+              </label>
+              <label>How did you hear about this event?
+                <select name="source" required>
+                  <option value="" disabled selected>Choose one</option>
+                  ${SOURCES.map((o) => `<option>${o}</option>`).join("")}
+                </select>
+              </label>
+              <label><span>Have a question for our guest expert? <span class="optional">(optional)</span></span>
+                <textarea name="question" rows="3" maxlength="400"></textarea>
               </label>
               <button class="btn" type="submit">Save My Seat</button>
               <p class="form-msg" role="status" aria-live="polite"></p>
@@ -676,10 +707,16 @@
 
     _onSubmit(e) {
       e.preventDefault();
-      const firstName = this._form.firstName.value.trim();
-      const email = this._form.email.value.trim();
-      if (!firstName) return this._error("Please add your first name.", this._form.firstName);
-      if (!EMAIL_RE.test(email)) return this._error("Please enter a valid email.", this._form.email);
+      const f = this._form;
+      const firstName = f.firstName.value.trim();
+      const lastName = f.lastName.value.trim();
+      const email = f.email.value.trim();
+      const source = f.source.value;
+      const question = f.question.value.trim();
+      if (!firstName) return this._error("Please add your first name.", f.firstName);
+      if (!lastName) return this._error("Please add your last name.", f.lastName);
+      if (!EMAIL_RE.test(email)) return this._error("Please enter a valid email.", f.email);
+      if (!source) return this._error("Please tell us how you heard about this event.", f.source);
 
       this._msg.textContent = "";
       this._msg.classList.remove("error");
@@ -689,7 +726,7 @@
       clearTimeout(this._timer);
       this._timer = setTimeout(() => this._fail(), RESPONSE_TIMEOUT_MS);
       this.dispatchEvent(
-        new CustomEvent("register", { detail: { firstName, email }, bubbles: true, composed: true }),
+        new CustomEvent("register", { detail: { firstName, lastName, email, source, question }, bubbles: true, composed: true }),
       );
     }
 

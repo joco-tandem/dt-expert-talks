@@ -6,7 +6,7 @@ $w.onReady(() => {
   const talks = $w("#customElement1");
   talks.on("register", async ({ detail }) => {
     try {
-      await registerForExpertTalk(detail.firstName, detail.email);
+      await registerForExpertTalk(detail);
       talks.setAttribute("status", "success");
     } catch (err) {
       console.error(err);

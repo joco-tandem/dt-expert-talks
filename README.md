@@ -13,12 +13,14 @@ Pin a tag (for example `v1.0.0`) so a change only goes live when the URL in Stud
 
 ## Registration
 
-The form dispatches a `register` event with `{ firstName, email }`. The Wix page code handles it and answers by setting the element's `status` attribute to `success` or `error`. If nothing answers within 15 seconds, the form shows an error.
+The form mirrors the Wix event's RSVP form: first name, last name, email, "How did you hear about this event?" and an optional question for the guest. It dispatches a `register` event with `{ firstName, lastName, email, source, question }`. The Wix page code handles it and answers by setting the element's `status` attribute to `success` or `error`. If nothing answers within 15 seconds, the form shows an error.
 
-Signups go to Kit with the tag `STATE - Expert Talks RSVP`. The Wix code lives in `wix/`:
+Each signup goes to Kit with the tag `STATE - Expert Talks RSVP` (last name in the `last_name` field) and is added as a guest on the Wix event, so it shows in the event's guest list. The Wix code lives in `wix/`:
 
-- `wix/backend/kit.web.js` → Studio backend file `backend/kit.web.js`. It reads a Kit v4 API key from the Secrets Manager (`KIT_API_KEY`), adds the subscriber, then applies the tag (by ID, `24334376`).
+- `wix/backend/kit.web.js` → Studio backend file `backend/kit.web.js`. It reads a Kit v4 API key from the Secrets Manager (`KIT_API_KEY`), adds the subscriber, applies the tag (by ID, `24334376`), then creates a Wix RSVP. Needs the `@wix/events` and `@wix/essentials` npm packages installed in Studio.
 - `wix/expert-talks.page.js` → the Expert Talks page's code. It answers `register` by calling the backend.
+
+The Wix RSVP only works while the event's registration is set to "on your site". The dropdown options and the form input names in `kit.web.js` must match the event's form, so update both if that form changes. A failed Wix RSVP is logged and doesn't fail the signup.
 
 ## Develop
 
